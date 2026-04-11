@@ -1,21 +1,19 @@
-# Configgen: NYC Mesh Configuration Generator
+# Configgen: Tucson Mesh Configuration Generator
 
-Configgen helps users configure their wireless devices to connect to NYC Mesh. It loads configuration templates from our [nycmeshnet/nycmesh-configs](https://github.com/nycmeshnet/nycmesh-configs) repo using Github's API and allows users to customize certain fields.
-
-It is a React app which we currently host at Netlify.
+Configgen helps users configure their wireless devices to connect to Tucson Mesh. Device configuration templates live under [`/configs/`](./configs/) in this repo, grouped by device.
 
 ### Development
 
-Ensure that a recent version of Node.js is installed on your machine.
+Ensure a recent version of Node.js is installed. This starts the Vite dev server:
 
-    cd nycmesh-configgen
-    npm install
-    npm start
+```sh
+cd tucsonmesh-configgen
+npm install
+npm run dev
+```
 
-This runs the app in development mode and opens a Chrome browser.
+Open the URL it prints to view the app. Changes to source or config templates hot-reload.
 
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Adding a config
 
-The page will reload if you make edits.
-
-You will also see any lint errors in the console.
+Drop a new `.tmpl` file into `configs/<DeviceName>/`. It'll auto-appear in the dropdowns on next reload. Any `{{tagname}}` in the template becomes a form field; `{{nodenumber}}` gets range-validated and `{{psk}}` is rendered as a masked password input.

@@ -23,6 +23,7 @@ function Tags({ tags, tagValues, onChange }) {
         <label htmlFor={tag}>{label}</label>
         <input
           required
+          type={tag === "psk" ? "password" : "text"}
           value={value}
           spellCheck={false}
           className="flex w-100 ml3 mw5"
@@ -35,6 +36,7 @@ function Tags({ tags, tagValues, onChange }) {
 
 function getLabel(tag) {
   if (tag === "nodenumber") return "network number";
+  if (tag === "psk") return "WPA PSK";
   return tag;
 }
 
