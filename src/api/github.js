@@ -1,4 +1,4 @@
-const REPO_BASE = "https://api.github.com/repos/mackncheesiest/tucsonmesh-configs";
+const REPO_BASE = "https://api.github.com/repos/tucsonmesh/tucsonmesh-configs";
 
 export async function fetchVersions() {
 	const tags = await get(REPO_BASE + "/tags");
