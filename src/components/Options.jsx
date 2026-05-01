@@ -1,24 +1,15 @@
 import React from "react";
 
 function Options({
-  versions,
   devices,
   templates,
-  selectedVersion,
   selectedDevice,
   selectedTemplate,
-  onVersionSelected,
   onDeviceSelected,
   onTemplateSelected,
 }) {
   return (
     <div className="w-100">
-      <Section
-        label="Version"
-        options={versions}
-        selected={selectedVersion}
-        onChange={onVersionSelected}
-      />
       <Section
         label="Device"
         options={devices}
