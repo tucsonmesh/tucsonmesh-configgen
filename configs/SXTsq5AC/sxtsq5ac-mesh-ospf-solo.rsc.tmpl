@@ -1,4 +1,4 @@
-# NYC Mesh Mikrotik SXTsq 5ac OSPF config
+# Tucson Mesh Mikrotik SXTsq 5ac OSPF config
 # OSPF mesh node
 :global nodenumber {{nodenumber}}
 
@@ -18,7 +18,6 @@
 
 /delay 15
 
-
 :foreach x in=[/interface wireless find] do={ /interface wireless reset-configuration $x }
 
 /interface bridge
@@ -31,15 +30,15 @@ set use-ip-firewall=yes
 
 /interface wireless security-profiles
 add authentication-types=wpa-psk,wpa2-psk management-protection=allowed mode=\
-    dynamic-keys name=nycmeshnet supplicant-identity=nycmesh \
+    dynamic-keys name=tucsonmeshnet supplicant-identity=tucsonmesh \
     wpa-pre-shared-key={{psk}} wpa2-pre-shared-key={{psk}}
 
 /interface wireless
-set [ find default-name=wlan1 ] band=5ghz-a/n/ac channel-width=20/40/80mhz-Ceee country="united states3" disabled=no distance=dynamic antenna-gain=0 installation=any frequency=5180 mode=station-bridge security-profile=nycmeshnet wireless-protocol=802.11 wps-mode=disabled ssid="nycmesh-xxxx-omni" radio-name=("nycmesh-" . $nodenumber . "-sxt") comment="uses nycmesh-xxxx-omni via mesh bridge"
+set [ find default-name=wlan1 ] band=5ghz-a/n/ac channel-width=20/40/80mhz-Ceee country="united states3" disabled=no distance=dynamic antenna-gain=0 installation=any frequency=5180 mode=station-bridge security-profile=tucsonmeshnet wireless-protocol=802.11 wps-mode=disabled ssid="tucsonmesh-xxxx-omni" radio-name=("tucsonmesh-" . $nodenumber . "-sxt") comment="uses tucsonmesh-xxxx-omni via mesh bridge"
 
 /interface wireless connect-list
-add allow-signal-out-of-range=3s disabled=yes interface=wlan1 security-profile=nycmeshnet signal-range=-75..120
-add connect=no disabled=yes interface=wlan1 security-profile=nycmeshnet signal-range=-120..-75
+add allow-signal-out-of-range=3s disabled=yes interface=wlan1 security-profile=tucsonmeshnet signal-range=-75..120
+add connect=no disabled=yes interface=wlan1 security-profile=tucsonmeshnet signal-range=-120..-75
 
 /ip address
 add address=($firstip . "/" . $cidrright) interface=local
@@ -62,10 +61,10 @@ add name=local ranges=$dhcprange
 add address-pool=local disabled=no interface=local name=localdhcp
 
 /ip dhcp-server network
-add address=$cidr dns-server=( "10.10.10.10," . $firstip) gateway=$firstip netmask=$cidrright
+add address=$cidr dns-server=( "10.69.0.49," . $firstip) gateway=$firstip netmask=$cidrright
 
 /ip dns
-set allow-remote-requests=yes servers=10.10.10.10,1.1.1.1
+set allow-remote-requests=yes servers=10.69.0.49,1.1.1.1
 
 /routing ospf instance set [ find default=yes ] router-id=$meship redistribute-connected=as-type-1
 /routing filter add chain="ospf-in" set-bgp-communities=65000:110 set-distance=205
@@ -76,8 +75,6 @@ set allow-remote-requests=yes servers=10.10.10.10,1.1.1.1
 
 /ip firewall address-list
 add address=10.0.0.0/8 list=meshaddr
-add address=199.167.59.0/24 list=meshaddr
-add address=199.170.132.0/24 list=meshaddr
 
 /ip firewall filter
 add action=accept chain=input protocol=icmp
@@ -96,11 +93,16 @@ set udplite disabled=yes
 set dccp disabled=yes
 set sctp disabled=yes
 
-/snmp set enabled=yes
+/snmp set enabled=no
+/snmp community add name="mesh-monitoring" addresses=0.0.0.0/0 security=private read-access=yes write-access=no authentication-protocol=SHA1 encryption-protocol=AES authentication-password=unset encryption-password=unset
+/snmp community disable 0
+/snmp set trap-community="mesh-monitoring"
+/snmp set trap-version=3
+/snmp set trap-generators=temp-exception
 
-/system identity set name=("nycmesh-" . $nodenumber . "-sxt")
+/system identity set name=("tucsonmesh-" . $nodenumber . "-sxt")
 
-/system clock set time-zone-name=America/New_York
-/system ntp client
-set enabled=yes primary-ntp=10.10.10.123 server-dns-names=0.pool.ntp.org
+/system clock set time-zone-name=America/Phoenix time-zone-autodetect=no
+/system ntp client 
+set enabled=yes primary-ntp=0.0.0.0 server-dns-names=0.pool.ntp.org
 
